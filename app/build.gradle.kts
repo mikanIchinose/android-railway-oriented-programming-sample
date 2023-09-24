@@ -61,16 +61,22 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.kotlinx.coroutines.core)
+
+    // network
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
-    implementation(libs.kotlinx.coroutines.core)
+
+    // image
+    implementation(libs.coil.compose)
+
+    // result
     implementation(libs.stream.result)
     implementation(libs.stream.result.call.retrofit)
-    implementation(libs.coil.compose)
     implementation(libs.kotlin.result)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
