@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

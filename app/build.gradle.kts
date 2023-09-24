@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.github.mikanichinose.result"
+    namespace = "com.github.mikanichinose.rop"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.github.mikanichinose.result"
+        applicationId = "com.github.mikanichinose.rop"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

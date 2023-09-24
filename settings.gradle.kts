@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Result Sample"
+rootProject.name = "ROP Sample"
 include(":app")
  

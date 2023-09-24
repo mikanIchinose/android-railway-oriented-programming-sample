@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 sealed interface ResultSampleError {
     data object UserNotFoundError : ResultSampleError

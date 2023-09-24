@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 import io.getstream.result.call.retrofit.RetrofitCall
 import retrofit2.http.GET

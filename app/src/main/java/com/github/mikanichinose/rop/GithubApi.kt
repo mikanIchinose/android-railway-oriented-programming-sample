@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 import retrofit2.http.GET
 import retrofit2.http.Path

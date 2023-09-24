@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 import android.os.Bundle
 import android.widget.Toast
@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.github.mikanichinose.result.ui.theme.ResultSampleTheme
+import com.github.mikanichinose.rop.ui.theme.ResultSampleTheme
 import io.getstream.result.extractCause
 
 class MainActivity : ComponentActivity() {

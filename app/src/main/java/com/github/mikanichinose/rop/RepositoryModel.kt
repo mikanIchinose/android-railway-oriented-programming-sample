@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 private const val USER_NAME = "mikanIchinose"
 

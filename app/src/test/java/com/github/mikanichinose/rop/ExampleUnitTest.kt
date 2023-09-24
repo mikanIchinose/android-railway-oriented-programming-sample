@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

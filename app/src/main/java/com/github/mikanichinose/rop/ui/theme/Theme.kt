@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result.ui.theme
+package com.github.mikanichinose.rop.ui.theme
 
 import android.app.Activity
 import android.os.Build

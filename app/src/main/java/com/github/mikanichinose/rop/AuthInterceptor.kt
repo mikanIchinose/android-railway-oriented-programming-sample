@@ -1,4 +1,4 @@
-package com.github.mikanichinose.result
+package com.github.mikanichinose.rop
 
 import okhttp3.Interceptor
 import okhttp3.Response
