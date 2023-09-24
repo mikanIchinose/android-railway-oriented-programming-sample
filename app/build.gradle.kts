@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
+    implementation(libs.retrofit.adapters.result)
 
     // image
     implementation(libs.coil.compose)
@@ -78,6 +79,7 @@ dependencies {
     implementation(libs.stream.result)
     implementation(libs.stream.result.call.retrofit)
     implementation(libs.kotlin.result)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

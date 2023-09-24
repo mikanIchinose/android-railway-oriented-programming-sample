@@ -1,5 +1,6 @@
 package com.github.mikanichinose.rop
 
+import com.skydoves.retrofit.adapters.result.ResultCallAdapterFactory
 import io.getstream.result.call.retrofit.RetrofitCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,7 +24,11 @@ object NetworkModule {
     private val streamRetrofit = retrofitBuilder
         .addCallAdapterFactory(RetrofitCallAdapterFactory.create())
         .build()
+    private val resultRetrofit = retrofitBuilder
+        .addCallAdapterFactory(ResultCallAdapterFactory.create())
+        .build()
 
     val streamGithubApi: StreamGithubApi = streamRetrofit.create()
+    val resultGithubApi: ResultGithubApi = resultRetrofit.create()
     val coroutineGithubApi: CoroutineGithubApi = retrofit.create()
 }
