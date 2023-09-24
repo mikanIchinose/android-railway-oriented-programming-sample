@@ -25,5 +25,5 @@ object NetworkModule {
         .build()
 
     val streamGithubApi: StreamGithubApi = streamRetrofit.create()
-    val githubApi: GithubApi = retrofit.create()
+    val coroutineGithubApi: CoroutineGithubApi = retrofit.create()
 }

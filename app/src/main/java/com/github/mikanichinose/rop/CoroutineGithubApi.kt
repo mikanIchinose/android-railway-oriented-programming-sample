@@ -3,7 +3,7 @@ package com.github.mikanichinose.rop
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface GithubApi {
+interface CoroutineGithubApi {
     @GET("users/{username}")
     suspend fun getUser(@Path("username") username: String): GithubUserJson
 

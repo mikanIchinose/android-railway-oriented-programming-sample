@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val streamGithubApi: StreamGithubApi,
-    private val githubApi: GithubApi,
+    private val coroutineGithubApi: CoroutineGithubApi,
 ) : ViewModel() {
     private var _repositories: MutableStateFlow<List<RepositoryModel>> =
         MutableStateFlow(emptyList())
@@ -120,20 +120,20 @@ class MainViewModel(
                 .flatMapConcat {
                     flow {
                         Log.d("MainViewModel", "getUser")
-                        emit(githubApi.getUser("mikanIchinose"))
+                        emit(coroutineGithubApi.getUser("mikanIchinose"))
                     }
                 }
                 .flatMapConcat { user ->
                     flow {
                         Log.d("MainViewModel", "getRepository")
-                        emit(githubApi.getRepository(user.login, "ddc-gitmoji"))
+                        emit(coroutineGithubApi.getRepository(user.login, "ddc-gitmoji"))
                     }
                 }
                 .flatMapConcat { repository ->
                     flow {
                         Log.d("MainViewModel", "getIssues")
                         emit(
-                            githubApi.getIssues(
+                            coroutineGithubApi.getIssues(
                                 repository.owner.login,
                                 repository.name
                             )
@@ -163,7 +163,10 @@ class MainViewModel(
         val Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return MainViewModel(NetworkModule.streamGithubApi, NetworkModule.githubApi) as T
+                return MainViewModel(
+                    NetworkModule.streamGithubApi,
+                    NetworkModule.coroutineGithubApi
+                ) as T
             }
         }
     }
