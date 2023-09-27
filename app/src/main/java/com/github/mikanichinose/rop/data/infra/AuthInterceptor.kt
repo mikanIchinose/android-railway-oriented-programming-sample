@@ -1,5 +1,6 @@
-package com.github.mikanichinose.rop
+package com.github.mikanichinose.rop.data.infra
 
+import com.github.mikanichinose.rop.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 

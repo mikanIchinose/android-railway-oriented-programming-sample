@@ -1,4 +1,4 @@
-package com.github.mikanichinose.rop
+package com.github.mikanichinose.rop.domain.model
 
 import com.squareup.moshi.JsonClass
 

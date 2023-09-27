@@ -1,173 +1,83 @@
 package com.github.mikanichinose.rop
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import io.getstream.result.Error
-import io.getstream.result.Result
-import io.getstream.result.call.doOnStart
-import io.getstream.result.call.map
-import io.getstream.result.call.retry
-import io.getstream.result.call.retry.RetryPolicy
-import io.getstream.result.flatMap
-import io.getstream.result.onSuccessSuspend
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.onFailure
+import com.github.mikanichinose.rop.data.infra.NetworkModule
+import com.github.mikanichinose.rop.data.repository.IssueRepository
+import com.github.mikanichinose.rop.data.repository.RepositoryRepository
+import com.github.mikanichinose.rop.domain.model.IssueModel
+import com.github.mikanichinose.rop.domain.model.RopError
+import com.github.mikanichinose.rop.domain.usecase.GetRandomIssueUseCase
+import com.github.mikanichinose.rop.domain.usecase.IssueResult
+import com.github.mikanichinose.rop.domain.usecase.ValidateSearchQueryUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import okio.IOException
+import retrofit2.HttpException
 
 class MainViewModel(
-    private val streamGithubApi: StreamGithubApi,
-    private val coroutineGithubApi: CoroutineGithubApi,
+    private val getRandomIssueUseCase: GetRandomIssueUseCase
 ) : ViewModel() {
-    private var _repositories: MutableStateFlow<List<RepositoryModel>> =
-        MutableStateFlow(emptyList())
-    val repositories: StateFlow<List<RepositoryModel>> = _repositories.asStateFlow()
+    private var _result: MutableStateFlow<IssueResult> =
+        MutableStateFlow(Ok(IssueModel("", "")))
+    val result: StateFlow<IssueResult> = _result.asStateFlow()
 
-    private var _issues: MutableStateFlow<List<GithubIssueJson>> =
-        MutableStateFlow(emptyList())
-    val issues: StateFlow<List<GithubIssueJson>> = _issues.asStateFlow()
+    private var _loading: MutableStateFlow<LoadingState> =
+        MutableStateFlow(LoadingState.LOADED)
+    val loading: StateFlow<LoadingState> = _loading.asStateFlow()
 
-    fun getMyRepositories(
-        onStart: () -> Unit,
-        onSuccess: () -> Unit,
-        onError: (Error) -> Unit,
-    ) {
+    fun getRandomIssue(query: String, onValidationError: () -> Unit) {
         viewModelScope.launch {
-            val result = streamGithubApi.getMyRepositories()
-                .retry(viewModelScope, retryPolicy)
-                .doOnStart(viewModelScope, onStart)
-                .map { repositories ->
-                    repositories.map { it.toDomainModel() }
-                }
-                .map { flowOf(it) }
-                .await()
-            result
-                .onSuccessSuspend {
-                    it.collect {
-                        _repositories.value = it
-                        onSuccess()
+            flow { emit(getRandomIssueUseCase(query)) }
+                .onStart { _loading.value = LoadingState.LOADING }
+                .onCompletion { _loading.value = LoadingState.LOADED }
+                .catch { e ->
+                    if (e is IOException || e is HttpException) {
+                        Err(RopError.UnknownError(e))
                     }
+                    throw e
                 }
-                .onError(onError)
-        }
-    }
-
-    fun clearRepositories() {
-        _repositories.value = emptyList()
-    }
-
-    fun clearIssues() {
-        _issues.value = emptyList()
-    }
-
-    fun getIssues(
-        onLog1: (apiName: String) -> Unit,
-        onLog2: (apiName: String) -> Unit,
-        onLog3: (apiName: String) -> Unit,
-        onSuccess: () -> Unit,
-        onError: (Error) -> Unit,
-    ) {
-        viewModelScope.launch {
-            // 1. getUser
-            // 2. getRepository use username from getUser result
-            // 3. getIssues use username and repo from getRepository result
-            val result = Result.Success(Unit)
-                .flatMap {
-                    streamGithubApi
-                        .getUser("mikanIchinose")
-                        .retry(viewModelScope, retryPolicy)
-                        .doOnStart(viewModelScope) { onLog1("getUser") }
-                        .await()
-                }
-                .flatMap { user ->
-                    streamGithubApi
-                        .getRepository(user.login, "ddc-gitmoji")
-                        .retry(viewModelScope, retryPolicy)
-                        .doOnStart(viewModelScope) { onLog2("getRepository") }
-                        .await()
-                }
-                .flatMap { repository ->
-                    streamGithubApi
-                        .getIssues(repository.owner.login, repository.name)
-                        .retry(viewModelScope, retryPolicy)
-                        .doOnStart(viewModelScope) { onLog3("getIssues") }
-                        .await()
-                }
-
-            result
-                .onSuccess {
-                    _issues.value = it
-                    onSuccess()
-                }
-                .onError(onError)
-        }
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun getIssueFlow(
-        onSuccess: () -> Unit,
-        onError: (e: Throwable) -> Unit
-    ) {
-        viewModelScope.launch {
-            val flow = flow { emit(Unit) }
-                .flatMapConcat {
-                    flow {
-                        Log.d("MainViewModel", "getUser")
-                        emit(coroutineGithubApi.getUser("mikanIchinose"))
-                    }
-                }
-                .flatMapConcat { user ->
-                    flow {
-                        Log.d("MainViewModel", "getRepository")
-                        emit(coroutineGithubApi.getRepository(user.login, "ddc-gitmoji"))
-                    }
-                }
-                .flatMapConcat { repository ->
-                    flow {
-                        Log.d("MainViewModel", "getIssues")
-                        emit(
-                            coroutineGithubApi.getIssues(
-                                repository.owner.login,
-                                repository.name
-                            )
-                        )
-                    }
-                }
-
-
-            flow.catch { e -> onError(e) }
                 .collect {
-                    _issues.value = it
-                    onSuccess()
+                    _result.value = it
+                    it.onFailure { error ->
+                        if (error is RopError.BlankQueryError) {
+                            onValidationError()
+                        }
+                    }
                 }
         }
-    }
-
-    private val retryPolicy = object : RetryPolicy {
-        override fun retryTimeout(attempt: Int, error: Error): Int = 3000
-        override fun shouldRetry(attempt: Int, error: Error): Boolean = attempt < 3
-    }
-
-    fun hoge(): kotlin.Result<String> {
-        return kotlin.Result.success("hoge")
     }
 
     companion object {
         val Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                val client = NetworkModule.coroutineGithubApi
+                val ioDispatcher = Dispatchers.IO
                 return MainViewModel(
-                    NetworkModule.streamGithubApi,
-                    NetworkModule.coroutineGithubApi
+                    GetRandomIssueUseCase(
+                        validateSearchQueryUseCase = ValidateSearchQueryUseCase(),
+                        issueRepository = IssueRepository(client, ioDispatcher),
+                        repositoryRepository = RepositoryRepository(client, ioDispatcher),
+                    )
                 ) as T
             }
         }
     }
+}
+
+enum class LoadingState {
+    LOADING,
+    LOADED,
 }

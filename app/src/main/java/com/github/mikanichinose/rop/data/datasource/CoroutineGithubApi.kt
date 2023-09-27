@@ -1,7 +1,12 @@
-package com.github.mikanichinose.rop
+package com.github.mikanichinose.rop.data.datasource
 
+import com.github.mikanichinose.rop.domain.model.GithubIssueJson
+import com.github.mikanichinose.rop.domain.model.GithubRepositoryJson
+import com.github.mikanichinose.rop.domain.model.GithubUserJson
+import com.github.mikanichinose.rop.domain.model.SearchResultJson
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface CoroutineGithubApi {
     @GET("users/{username}")
@@ -21,4 +26,9 @@ interface CoroutineGithubApi {
         @Path("owner") owner: String,
         @Path("repo") repo: String,
     ): List<GithubIssueJson>
+
+    @GET("search/repositories")
+    suspend fun searchRepositories(
+        @Query("q") query: String,
+    ): SearchResultJson
 }

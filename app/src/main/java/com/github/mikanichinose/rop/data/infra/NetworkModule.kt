@@ -1,5 +1,8 @@
-package com.github.mikanichinose.rop
+package com.github.mikanichinose.rop.data.infra
 
+import com.github.mikanichinose.rop.data.datasource.CoroutineGithubApi
+import com.github.mikanichinose.rop.data.datasource.ResultGithubApi
+import com.github.mikanichinose.rop.data.datasource.StreamGithubApi
 import com.skydoves.retrofit.adapters.result.ResultCallAdapterFactory
 import io.getstream.result.call.retrofit.RetrofitCallAdapterFactory
 import okhttp3.OkHttpClient
@@ -12,8 +15,8 @@ import retrofit2.create
 object NetworkModule {
     private const val BASE_URL = "https://api.github.com/"
     private val client = OkHttpClient.Builder().apply {
-        addInterceptor(AuthInterceptor())
         addInterceptor(HttpLoggingInterceptor().setLevel(Level.BODY))
+        addInterceptor(AuthInterceptor())
     }.build()
     private val retrofitBuilder = Retrofit.Builder()
         .baseUrl(BASE_URL)

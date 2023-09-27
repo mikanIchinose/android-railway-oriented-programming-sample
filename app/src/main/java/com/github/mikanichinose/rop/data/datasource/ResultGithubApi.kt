@@ -1,5 +1,8 @@
-package com.github.mikanichinose.rop
+package com.github.mikanichinose.rop.data.datasource
 
+import com.github.mikanichinose.rop.domain.model.GithubIssueJson
+import com.github.mikanichinose.rop.domain.model.GithubRepositoryJson
+import com.github.mikanichinose.rop.domain.model.GithubUserJson
 import retrofit2.http.GET
 import retrofit2.http.Path
 

@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.stream.result)
     implementation(libs.stream.result.call.retrofit)
     implementation(libs.kotlin.result)
+    implementation(libs.kotlin.result.coroutines)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

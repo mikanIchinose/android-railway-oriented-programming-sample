@@ -1,4 +1,4 @@
-package com.github.mikanichinose.rop
+package com.github.mikanichinose.rop.domain.model
 
 private const val USER_NAME = "mikanIchinose"
 
@@ -6,6 +6,6 @@ data class RepositoryModel(
     val id: Int,
     val name: String,
 ) {
-    val ogpImageUrl:String
+    val ogpImageUrl: String
         get() = "https://opengraph.githubassets.com/1a/$USER_NAME/$name"
 }
