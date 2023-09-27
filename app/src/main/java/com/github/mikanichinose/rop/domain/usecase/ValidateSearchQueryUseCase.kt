@@ -7,10 +7,10 @@ import com.github.mikanichinose.rop.domain.model.RopError
 
 class ValidateSearchQueryUseCase {
     operator fun invoke(query: String): Result<String, RopError> {
-        return if (query.isBlank()) {
-            Err(RopError.BlankQueryError)
-        } else {
+        return if (query.isNotBlank()) {
             Ok(query)
+        } else {
+            Err(RopError.BlankQueryError)
         }
     }
 }
