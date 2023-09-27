@@ -12,8 +12,8 @@ typealias IssueResult = Result<IssueModel, RopError>
 
 class GetRandomIssueUseCase(
     private val validateSearchQueryUseCase: ValidateSearchQueryUseCase,
-    private val issueRepository: IssueRepository,
     private val repositoryRepository: RepositoryRepository,
+    private val issueRepository: IssueRepository,
 ) {
     suspend operator fun invoke(query: String): IssueResult {
         return Ok(Unit)

@@ -68,8 +68,8 @@ class MainViewModel(
                 return MainViewModel(
                     GetRandomIssueUseCase(
                         validateSearchQueryUseCase = ValidateSearchQueryUseCase(),
-                        issueRepository = IssueRepository(client, ioDispatcher),
                         repositoryRepository = RepositoryRepository(client, ioDispatcher),
+                        issueRepository = IssueRepository(client, ioDispatcher),
                     )
                 ) as T
             }
